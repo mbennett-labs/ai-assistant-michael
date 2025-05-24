@@ -1,0 +1,23 @@
+# Environment variables
+.env
+
+# Google credentials
+config/credentials.json
+config/token.pickle
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
