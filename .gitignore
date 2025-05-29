@@ -23,3 +23,10 @@ venv/
 Thumbs.db
 PAT personal access token fo ai assistant github.txt
 *.txt
+# Large files and personal documents
+*.pdf
+*.exe
+*.msi
+*.zip
+Document*.pdf
+msys2*.exe
