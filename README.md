@@ -1,3 +1,4 @@
+
 # Michael's AI Assistant | Quantum Shield Labs
 
 > **A production-ready AI assistant demonstrating practical WebML applications - integrates with Google Calendar to create real appointments through natural language conversation.**
@@ -142,7 +143,9 @@ python app.py
 ```
 
 ### **Live Demo**
-**🌐 [Try it now](http://69.62.69.140:5000)** - No installation required!
+**🌐 [Try it now](http://69.62.69.140:5000) (Coming back online soon!)** - Demo temporarily offline for feature updates.
+
+*Note: Live demo is temporarily down for authentication system upgrades. Check back tomorrow for full functionality!*
 
 ---
 
