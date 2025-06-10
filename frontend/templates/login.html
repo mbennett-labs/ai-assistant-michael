@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Shield Labs | Secure Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .quantum-bg { 
+            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 25%, #7c3aed 50%, #db2777 75%, #dc2626 100%); 
+            animation: quantumShift 10s ease-in-out infinite; 
+        }
+        @keyframes quantumShift { 
+            0%, 100% { background-position: 0% 50%; } 
+            50% { background-position: 100% 50%; } 
+        }
+        .quantum-card { 
+            backdrop-filter: blur(20px); 
+            background: rgba(255, 255, 255, 0.1); 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+        }
+        .quantum-input { 
+            background: rgba(255, 255, 255, 0.9); 
+            border: 2px solid transparent; 
+            transition: all 0.3s ease; 
+        }
+        .quantum-input:focus { 
+            background: rgba(255, 255, 255, 1); 
+            border-color: #3b82f6; 
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); 
+        }
+        .quantum-btn { 
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6); 
+            transition: all 0.3s ease; 
+        }
+        .quantum-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); 
+        }
+        .demo-badge { 
+            background: linear-gradient(135deg, #10b981, #059669); 
+            animation: glow 2s ease-in-out infinite alternate; 
+        }
+        @keyframes glow { 
+            from { box-shadow: 0 0 10px #10b981; } 
+            to { box-shadow: 0 0 20px #059669; } 
+        }
+    </style>
+</head>
+<body class="quantum-bg min-h-screen flex items-center justify-center p-4">
+    <div class="quantum-card rounded-2xl p-8 w-full max-w-md shadow-2xl">
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full flex items-center justify-center">
+                <i class="fas fa-shield-alt text-white text-2xl"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-white mb-2">Quantum Shield Labs</h1>
+            <p class="text-blue-100">Secure AI Assistant Access</p>
+            <div class="flex items-center justify-center mt-4 space-x-2">
+                <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                <span class="text-green-300 text-sm">Quantum Encryption Active</span>
+            </div>
+        </div>
+
+        <form id="loginForm" class="space-y-6">
+            <div>
+                <label class="block text-blue-100 text-sm font-medium mb-2">
+                    <i class="fas fa-user mr-2"></i>Username
+                </label>
+                <input type="text" id="username" class="quantum-input w-full px-4 py-3 rounded-lg focus:outline-none" placeholder="Enter username" required>
+            </div>
+            
+            <div>
+                <label class="block text-blue-100 text-sm font-medium mb-2">
+                    <i class="fas fa-lock mr-2"></i>Password
+                </label>
+                <input type="password" id="password" class="quantum-input w-full px-4 py-3 rounded-lg focus:outline-none" placeholder="Enter password" required>
+            </div>
+            
+            <button type="submit" class="quantum-btn w-full py-3 rounded-lg text-white font-medium text-lg">
+                <i class="fas fa-sign-in-alt mr-2"></i>Authenticate
+            </button>
+        </form>
+
+        <div class="mt-8 p-4 demo-badge rounded-lg text-center cursor-pointer" onclick="fillDemo()">
+            <p class="text-white font-semibold mb-2">🚀 Demo Access Available</p>
+            <p class="text-green-100 text-sm">Username: <code class="bg-black bg-opacity-20 px-2 py-1 rounded">demo</code></p>
+            <p class="text-green-100 text-sm">Password: <code class="bg-black bg-opacity-20 px-2 py-1 rounded">demo123</code></p>
+            <p class="text-green-200 text-xs mt-2">Click here to auto-fill demo credentials</p>
+        </div>
+
+        <div id="statusMessage" class="mt-4 p-3 rounded-lg hidden">
+            <p id="statusText" class="text-center font-medium"></p>
+        </div>
+
+        <div class="mt-8 text-center">
+            <p class="text-blue-200 text-sm">
+                <i class="fas fa-shield-alt mr-1"></i>
+                Protected by Quantum Security Protocol v2.1
+            </p>
+            <p class="text-blue-300 text-xs mt-2">
+                © 2025 Quantum Shield Labs LLC
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function fillDemo() {
+            document.getElementById('username').value = 'demo';
+            document.getElementById('password').value = 'demo123';
+            showStatus('Demo credentials loaded! Click Authenticate to continue.', 'info');
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            showStatus('Quantum authentication in progress...', 'info');
+            
+            try {
+                const response = await fetch('/auth', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username: username, password: password})
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showStatus('✅ Authentication successful! Redirecting...', 'success');
+                    setTimeout(() => { window.location.href = '/'; }, 1500);
+                } else {
+                    showStatus('❌ ' + data.error, 'error');
+                }
+                
+            } catch (error) {
+                showStatus('❌ Connection error. Please try again.', 'error');
+            }
+        });
+        
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('statusMessage');
+            const statusText = document.getElementById('statusText');
+            
+            statusText.textContent = message;
+            statusDiv.className = 'mt-4 p-3 rounded-lg';
+            
+            if (type === 'success') {
+                statusDiv.classList.add('bg-green-500', 'text-white');
+            } else if (type === 'error') {
+                statusDiv.classList.add('bg-red-500', 'text-white');
+            } else {
+                statusDiv.classList.add('bg-blue-500', 'text-white');
+            }
+            
+            statusDiv.classList.remove('hidden');
+            
+            if (type === 'error') {
+                setTimeout(() => statusDiv.classList.add('hidden'), 3000);
+            }
+        }
+    </script>
+</body>
+</html>
