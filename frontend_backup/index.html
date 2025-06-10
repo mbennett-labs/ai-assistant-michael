@@ -1,0 +1,40 @@
+<!-- Calendar Tab Content -->
+            <div id="calendarContent" class="hidden">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 class="text-2xl font-bold" id="currentMonth">Loading...</h3>
+                            <p class="text-gray-600">Your Google Calendar Events</p>
+                        </div>
+                        <div class="space-x-2">
+                            <button onclick="navigateCalendar('prev')" class="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200">
+                                ← Previous
+                            </button>
+                            <button onclick="navigateCalendar('today')" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                                Today
+                            </button>
+                            <button onclick="navigateCalendar('next')" class="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200">
+                                Next →
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Calendar Grid -->
+                    <div class="calendar-container">
+                        <!-- Day headers -->
+                        <div class="grid grid-cols-7 gap-px bg-gray-200 mb-px">
+                            <div class="bg-gray-50 p-2 text-center font-semibold text-sm">Sunday</div>
+                            <div class="bg-gray-50 p-2 text-center font-semibold text-sm">Monday</div>
+                            <div class="bg-gray-50 p-2 text-center font-semibold text-sm">Tuesday</div>
+                            <div class="bg-gray-50 p-2 text-center font-semibold text-sm">Wednesday</div>
+                            <div class="bg-gray-50 p-2 text-center font-semibold text-sm">Thursday</div>
+                            <div class="bg-gray-50 p-2 text-center font-semibold text-sm">Friday</div>
+                            <div class="bg-gray-50 p-2 text-center font-semibold text-sm">Saturday</div>
+                        </div>
+                        <!-- Calendar days grid -->
+                        <div id="calendarGrid" class="grid grid-cols-7 gap-px bg-gray-200">
+                            <!-- Calendar days will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>

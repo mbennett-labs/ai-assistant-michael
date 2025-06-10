@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Michael's AI Assistant | Quantum Shield Labs</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .chat-container { height: 70vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .tab-active { background: #3b82f6; color: white; }
+        .calendar-day {
+            min-height: 100px;
+            border: 1px solid #e5e7eb;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .calendar-day:hover { background: #f8fafc; }
+        .calendar-day.today { background: #dbeafe; border-color: #3b82f6; font-weight: bold; }
+        .calendar-day.other-month { background: #f9fafb; color: #9ca3af; }
+        .event-dot { width: 6px; height: 6px; background: #3b82f6; border-radius: 50%; display: inline-block; margin: 1px; }
+        .event-preview { font-size: 0.7rem; background: #3b82f6; color: white; padding: 1px 4px; border-radius: 2px; margin: 1px 0; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4">
+        <div class="container mx-auto px-4 flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold">Michael's AI Assistant</h1>
+                <p class="text-blue-100">Powered by Quantum Shield Labs</p>
+            </div>
+            <div class="flex space-x-4">
+                <span class="bg-green-500 px-3 py-1 rounded-full text-sm">🟢 Online</span>
+                <span class="bg-blue-500 px-3 py-1 rounded-full text-sm">📅 Calendar Connected</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex space-x-4 mb-4">
+                <button onclick="showTab('chat')" id="chatTab" class="tab-active px-6 py-2 rounded-lg font-medium">
+                    💬 AI Chat
+                </button>
+                <button onclick="showTab('calendar')" id="calendarTab" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-300">
+                    📅 Calendar View
+                </button>
+            </div>
+
+            <div id="chatSection">
+                <div class="chat-container rounded-lg shadow-lg p-6 mb-4 overflow-y-auto">
+                    <div id="chatMessages" class="space-y-4">
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-robot text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-700">AI Assistant</p>
+                                    <p class="text-gray-600 mt-1">Hello! Try the Calendar View to see your monthly schedule with full navigation!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-4">
+                    <input type="text" id="messageInput" placeholder="Ask me about your schedule..." 
+                           class="w-full px-4 py-3 border rounded-lg" onkeypress="handleKeyPress(event)">
+                    <button onclick="sendMessage()" class="mt-2 bg-blue-500 text-white px-6 py-2 rounded">Send</button>
+                </div>
+            </div>
+
+            <div id="calendarSection" style="display: none;">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <!-- Calendar Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-800" id="monthYear">May 2025</h2>
+                            <p class="text-gray-600">Your Calendar - Quantum Shield Labs</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="previousMonth()" class="bg-gray-100 hover:bg-gray-200 p-3 rounded-lg transition-colors">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button onclick="goToToday()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                                Today
+                            </button>
+                            <button onclick="nextMonth()" class="bg-gray-100 hover:bg-gray-200 p-3 rounded-lg transition-colors">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                            <button onclick="loadCalendarEvents()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Calendar Grid -->
+                    <div class="bg-white border rounded-lg overflow-hidden shadow-sm">
+                        <!-- Day Headers -->
+                        <div class="grid grid-cols-7 bg-gray-100">
+                            <div class="p-4 text-center font-semibold text-gray-700">Sunday</div>
+                            <div class="p-4 text-center font-semibold text-gray-700">Monday</div>
+                            <div class="p-4 text-center font-semibold text-gray-700">Tuesday</div>
+                            <div class="p-4 text-center font-semibold text-gray-700">Wednesday</div>
+                            <div class="p-4 text-center font-semibold text-gray-700">Thursday</div>
+                            <div class="p-4 text-center font-semibold text-gray-700">Friday</div>
+                            <div class="p-4 text-center font-semibold text-gray-700">Saturday</div>
+                        </div>
+                        
+                        <!-- Calendar Days Grid -->
+                        <div id="calendarGrid" class="grid grid-cols-7">
+                            <!-- Days will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Event Details Modal -->
+                    <div id="eventModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+                        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-bold" id="modalDate">Event Details</h3>
+                                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                                    <i class="fas fa-times text-xl"></i>
+                                </button>
+                            </div>
+                            <div id="modalContent">
+                                <!-- Event details will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentDate = new Date();
+        let calendarEvents = [];
+
+        function showTab(tab) {
+            document.getElementById('chatSection').style.display = tab === 'chat' ? 'block' : 'none';
+            document.getElementById('calendarSection').style.display = tab === 'calendar' ? 'block' : 'none';
+            
+            document.getElementById('chatTab').className = tab === 'chat' ? 'tab-active px-6 py-2 rounded-lg font-medium' : 'bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-300';
+            document.getElementById('calendarTab').className = tab === 'calendar' ? 'tab-active px-6 py-2 rounded-lg font-medium' : 'bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-300';
+            
+            if (tab === 'calendar') {
+                loadCalendarEvents();
+                renderCalendar();
+            }
+        }
+
+        async function loadCalendarEvents() {
+            try {
+                const response = await fetch('/calendar-events');
+                const data = await response.json();
+                calendarEvents = data.success ? data.events : [];
+                renderCalendar();
+            } catch (error) {
+                console.error('Error loading events:', error);
+            }
+        }
+
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            // Update month/year display
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"];
+            document.getElementById('monthYear').textContent = `${monthNames[month]} ${year}`;
+
+            // Calculate calendar layout
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const startDate = new Date(firstDay);
+            startDate.setDate(startDate.getDate() - firstDay.getDay());
+
+            const today = new Date();
+            let calendarHTML = '';
+
+            // Generate 6 weeks (42 days)
+            for (let i = 0; i < 42; i++) {
+                const currentDay = new Date(startDate);
+                currentDay.setDate(startDate.getDate() + i);
+                
+                const isToday = currentDay.toDateString() === today.toDateString();
+                const isCurrentMonth = currentDay.getMonth() === month;
+                const dayEvents = getEventsForDay(currentDay);
+                
+                calendarHTML += `
+                    <div class="calendar-day ${isToday ? 'today' : ''} ${!isCurrentMonth ? 'other-month' : ''}" 
+                         onclick="showDayEvents('${currentDay.toISOString()}', ${currentDay.getDate()}, '${monthNames[currentDay.getMonth()]} ${currentDay.getFullYear()}')">
+                        <div class="p-2">
+                            <div class="text-lg font-medium mb-1">${currentDay.getDate()}</div>
+                            ${dayEvents.slice(0, 2).map(event => `
+                                <div class="event-preview truncate" title="${event.summary}">
+                                    ${event.summary.length > 8 ? event.summary.substring(0, 8) + '...' : event.summary}
+                                </div>
+                            `).join('')}
+                            ${dayEvents.length > 2 ? `<div class="text-xs text-gray-500">+${dayEvents.length - 2} more</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('calendarGrid').innerHTML = calendarHTML;
+        }
+
+        function getEventsForDay(date) {
+            return calendarEvents.filter(event => {
+                const eventDate = new Date(event.start.dateTime || event.start.date);
+                return eventDate.toDateString() === date.toDateString();
+            });
+        }
+
+        function showDayEvents(dateString, day, monthYear) {
+            const date = new Date(dateString);
+            const events = getEventsForDay(date);
+            
+            document.getElementById('modalDate').textContent = `${monthYear} ${day}`;
+            
+            if (events.length > 0) {
+                document.getElementById('modalContent').innerHTML = events.map(event => {
+                    const eventDate = new Date(event.start.dateTime || event.start.date);
+                    const timeStr = event.start.dateTime ? eventDate.toLocaleTimeString() : 'All day';
+                    return `
+                        <div class="mb-4 p-3 bg-blue-50 border-l-4 border-blue-500 rounded">
+                            <h4 class="font-semibold text-blue-800">${event.summary}</h4>
+                            <p class="text-sm text-blue-600">${timeStr}</p>
+                            ${event.description ? `<p class="text-sm text-gray-600 mt-1">${event.description}</p>` : ''}
+                            ${event.location ? `<p class="text-sm text-gray-500 mt-1"><i class="fas fa-map-marker-alt"></i> ${event.location}</p>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                document.getElementById('modalContent').innerHTML = '<p class="text-gray-600">No events scheduled for this day.</p>';
+            }
+            
+            document.getElementById('eventModal').classList.remove('hidden');
+            document.getElementById('eventModal').classList.add('flex');
+        }
+
+        function closeModal() {
+            document.getElementById('eventModal').classList.add('hidden');
+            document.getElementById('eventModal').classList.remove('flex');
+        }
+
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        function goToToday() {
+            currentDate = new Date();
+            renderCalendar();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') sendMessage();
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            addMessage(message, 'user');
+            input.value = '';
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: message})
+                });
+                const data = await response.json();
+                addMessage(data.success ? data.response : 'Error: ' + data.error, 'ai');
+            } catch (error) {
+                addMessage('Connection error', 'ai');
+            }
+        }
+
+        function addMessage(message, sender) {
+            const div = document.createElement('div');
+            div.className = sender === 'user' ? 'bg-blue-500 text-white p-3 rounded ml-auto max-w-xs' : 'bg-white p-4 rounded shadow-sm';
+            div.innerHTML = sender === 'user' ? message : `
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-robot text-white text-sm"></i>
+                    </div>
+                    <div><p class="font-semibold">AI Assistant</p><p class="text-gray-600">${message}</p></div>
+                </div>`;
+            document.getElementById('chatMessages').appendChild(div);
+        }
+    </script>
+</body>
+</html>
